@@ -2727,3 +2727,287 @@ footer .brand {
   box-shadow: 0 10px 24px rgba(70, 120, 210, 0.28);
   filter: none;
 }
+/* ============================================================
+   MOBILE / TABLET POLISH LAYER (keep at the very end of the file)
+   Everything below only refines the rules above for touch screens
+   and small viewports: sizing, tap targets, menu, animations.
+   ============================================================ */
+
+/* ---- global safety nets ---- */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+body {
+  overflow-x: hidden; /* fallback for older browsers */
+  -webkit-tap-highlight-color: rgba(20, 45, 78, 0.12);
+}
+@supports (overflow: clip) {
+  body {
+    overflow-x: clip; /* clip, not hidden: keeps position:sticky nav working */
+  }
+}
+img,
+svg,
+video {
+  max-width: 100%;
+}
+.site-nav {
+  -webkit-backdrop-filter: blur(18px);
+  padding-top: env(safe-area-inset-top, 0px);
+}
+footer {
+  padding-bottom: max(0px, env(safe-area-inset-bottom, 0px));
+}
+
+/* ---- touch devices: no sticky hover states, real pressed feedback ---- */
+@media (hover: none) {
+  .project-card.reveal.in-view:hover,
+  .skill-card.reveal.in-view:hover,
+  .service-card.reveal.in-view:hover {
+    transform: none;
+  }
+  .contact-copy .social-circle:hover {
+    transform: none;
+  }
+  .hx-btn:hover {
+    transform: none;
+    background: var(--accent);
+  }
+  .hx-btn:active,
+  .button:active,
+  .nav-cta:active {
+    transform: scale(0.97);
+  }
+  .project-card:active,
+  .skill-card:active,
+  .service-card:active {
+    transform: scale(0.985);
+  }
+}
+
+/* ---- readable type on every small screen (phones + tablets) ---- */
+@media (max-width: 1100px) {
+  .section-label,
+  .card-index,
+  .project-count,
+  .ab-tag,
+  .ab-caption {
+    font-size: 11px;
+  }
+  .ab-tag {
+    padding: 6px 12px;
+  }
+  .project-type,
+  .project-bottom small,
+  .call-card > span,
+  .experience-note .section-label,
+  .testimonial-panel small {
+    font-size: 11px;
+  }
+  .project-tags span {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+  .project-bottom {
+    font-size: 13px;
+  }
+  .stat-card small {
+    font-size: 12px;
+  }
+  .skill-card li {
+    font-size: 13px;
+  }
+  .tool-pill {
+    font-size: 12px;
+  }
+  .service-number,
+  .process-card > span {
+    font-size: 12px;
+  }
+  .contact-form p,
+  .contact-form label,
+  .contact-form small {
+    font-size: 12px;
+  }
+  .brand > span:last-child {
+    font-size: 11px;
+  }
+  footer > span,
+  .back-top {
+    font-size: 11px;
+  }
+}
+
+/* ---- comfortable tap targets on any touch screen ---- */
+@media (pointer: coarse) {
+  .nav-links a,
+  .hx-list a,
+  .hx-link,
+  .project-bottom a,
+  .back-top,
+  .contact-links a,
+  .brand {
+    min-height: 44px;
+  }
+  .hx-link,
+  .project-bottom a,
+  .back-top {
+    display: inline-flex;
+    align-items: center;
+  }
+  .nav-links a {
+    display: inline-flex;
+    align-items: center;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+  .faq-item button {
+    min-height: 56px;
+  }
+}
+
+/* ---- phones ---- */
+@media (max-width: 760px) {
+  .site-nav {
+    height: calc(70px + env(safe-area-inset-top, 0px));
+  }
+  .brand {
+    min-height: 44px;
+  }
+  .mobile-toggle {
+    min-width: 44px;
+    min-height: 44px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border-radius: 12px;
+    cursor: pointer;
+  }
+
+  /* dropdown menu: animated open/close instead of a hard display switch */
+  .nav-links {
+    display: grid;
+    top: 100%;
+    background: #f4f4f5;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+    box-shadow: 0 18px 30px rgba(17, 17, 17, 0.1);
+    transition:
+      opacity 0.25s ease,
+      transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+      visibility 0s linear 0.3s;
+  }
+  .nav-links.open {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    transition-delay: 0s;
+  }
+  .nav-links a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+  }
+
+  /* spacing rhythm */
+  .section-pad {
+    padding: 64px 5%;
+  }
+
+  /* forms: 16px stops iOS Safari from zooming in on focus */
+  .contact-form input,
+  .contact-form textarea {
+    font-size: 16px;
+  }
+
+  /* lighter, shorter scroll animations so they feel smooth on phones */
+  .reveal {
+    transition-duration: 0.65s;
+  }
+  .reveal.from-left:not(.in-view) {
+    transform: translate3d(-34px, 0, 0);
+  }
+  .reveal.from-right:not(.in-view) {
+    transform: translate3d(34px, 0, 0);
+  }
+  .reveal.pop:not(.in-view) {
+    transform: translate3d(0, 22px, 0) scale(0.94);
+  }
+  .hx-w {
+    translate: none; /* parallax is for mouse only */
+  }
+}
+
+/* ---- big phones & small tablets: hero shouldn't be taller than the screen ---- */
+@media (min-width: 561px) and (max-width: 820px) {
+  .hx-portrait {
+    width: min(62%, 340px);
+  }
+  .hx-w {
+    font-size: clamp(64px, 11.5vw, 96px);
+  }
+  .hx-w3 {
+    margin-top: -48px;
+  }
+}
+
+/* ---- very small phones (320–360px) ---- */
+@media (max-width: 360px) {
+  .site-nav,
+  .section-pad {
+    padding-left: 4.5%;
+    padding-right: 4.5%;
+  }
+  .hx-w {
+    font-size: clamp(46px, 15.5vw, 60px);
+  }
+  .hx-actions {
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+  .contact-copy .contact-socials {
+    gap: 9px;
+  }
+  .contact-copy .social-circle {
+    width: 42px;
+    height: 42px;
+    flex-basis: 42px;
+  }
+}
+
+/* ---- landscape phones: stacked hero must not fill the whole screen ---- */
+@media (max-height: 480px) and (orientation: landscape) and (max-width: 900px) {
+  .hx-portrait {
+    width: min(38%, 240px);
+  }
+  .site-nav {
+    height: 56px;
+  }
+}
+
+/* ---- respect "reduce motion" everywhere, including the hero intro ---- */
+@media (prefers-reduced-motion: reduce) {
+  .hx-w,
+  .hx-img,
+  .hx-copy,
+  .hx-actions,
+  .hx-list li,
+  .hx-arrow,
+  .hx-swirl path {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+    filter: none !important;
+  }
+  .marquee-track {
+    animation-duration: 90s;
+  }
+}

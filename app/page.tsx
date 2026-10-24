@@ -239,8 +239,11 @@ export default function Home() {
             else if (!e.isIntersecting) e.target.classList.remove("in-view");
           }
         }),
-      { threshold: [0, 0.12] },
+      // small negative bottom margin: content starts animating a little
+      // before it hits the very bottom edge, which feels smoother on phones
+      { threshold: [0, 0.12], rootMargin: "0px 0px -6% 0px" },
     );
+    const isPhone = window.matchMedia("(max-width: 760px)").matches;
     const tag = (sel: string, f: (i: number) => string) =>
       document.querySelectorAll<HTMLElement>(sel).forEach((el) => {
         const i = el.parentElement
@@ -248,7 +251,8 @@ export default function Home() {
           : 0;
         const c = f(i);
         if (c) el.classList.add(c);
-        el.style.transitionDelay = (i % 4) * 90 + "ms";
+        // single-column phones reveal one card at a time, so no stagger there
+        el.style.transitionDelay = isPhone ? "0ms" : (i % 4) * 90 + "ms";
       });
     tag(".about-visual", () => "from-left");
     tag(".about-copy", () => "from-right");
@@ -281,6 +285,26 @@ export default function Home() {
       window.removeEventListener("scroll", scroll);
     };
   }, []);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    const onResize = () => {
+      if (window.innerWidth > 760) setMenuOpen(false);
+    };
+    const onOutside = (e: PointerEvent) => {
+      if (!(e.target as HTMLElement).closest(".site-nav")) setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("resize", onResize);
+    document.addEventListener("pointerdown", onOutside);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("resize", onResize);
+      document.removeEventListener("pointerdown", onOutside);
+    };
+  }, [menuOpen]);
   useEffect(() => {
     const st = document.querySelector<HTMLElement>(".hx-stage");
     if (
@@ -396,11 +420,16 @@ export default function Home() {
         <button
           className="mobile-toggle"
           aria-label="Toggle menu"
+          aria-expanded={menuOpen}
+          aria-controls="primary-nav"
           onClick={() => setMenuOpen(!menuOpen)}
         >
           {menuOpen ? <X /> : <Menu />}
         </button>
-        <nav className={menuOpen ? "nav-links open" : "nav-links"}>
+        <nav
+          id="primary-nav"
+          className={menuOpen ? "nav-links open" : "nav-links"}
+        >
           {navItems.map(([id, label]) => (
             <a
               key={id}
@@ -530,9 +559,17 @@ export default function Home() {
               role="button"
               tabIndex={0}
               aria-label="Swap photos"
-              onMouseEnter={() => setSwapped(true)}
-              onMouseLeave={() => setSwapped(false)}
-              onClick={() => setSwapped((v) => !v)}
+              onPointerEnter={(e) => {
+                if (e.pointerType === "mouse") setSwapped(true);
+              }}
+              onPointerLeave={(e) => {
+                if (e.pointerType === "mouse") setSwapped(false);
+              }}
+              onClick={(e) => {
+                // mouse users already get the hover swap; taps toggle it
+                if ((e.nativeEvent as PointerEvent).pointerType !== "mouse")
+                  setSwapped((v) => !v);
+              }}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();

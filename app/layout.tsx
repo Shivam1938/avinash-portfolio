@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 export const metadata: Metadata = {
   title: "Avinash Chaudhary — Digital Marketer",
@@ -11,6 +11,12 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://avinashchaudhary.com",
   },
+};
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#f4f4f5",
 };
 export default function RootLayout({
   children,
